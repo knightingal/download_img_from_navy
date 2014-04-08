@@ -19,19 +19,21 @@ class RequestHandler(CGIHTTPRequestHandler):
         content = self.rfile.read(int(content_lenght))
 
         print content
-        jsonObj = json.loads(content)
-        print jsonObj
-        title = jsonObj["title"]
-        print title
-        try:
-            os.mkdir(rootDirString + jsonObj["title"])
-        except OSError:
-            print rootDirString + jsonObj["title"] + "exists"
-        for url in jsonObj["list"]:
-            #download_img(url, jsonObj["href"], jsonObj["title"])
-            thread = MyThread(url, jsonObj["href"], jsonObj["title"])
-            thread.start()
-        #print "download succ"
+        jsonObjTotal = json.loads(content)
+        print jsonObjTotal
+        for jsonObjStr in jsonObjTotal:
+            jsonObj = json.loads(jsonObjStr)
+            title = jsonObj["title"]
+            print title
+            try:
+                os.mkdir(rootDirString + jsonObj["title"])
+            except OSError:
+                print rootDirString + jsonObj["title"] + "exists"
+            for url in jsonObj["list"]:
+                #download_img(url, jsonObj["href"], jsonObj["title"])
+                thread = MyThread(url, jsonObj["href"], jsonObj["title"])
+                thread.start()
+            #print "download succ"
         self.wfile.write("ok")
 
 class MyThread(Thread):

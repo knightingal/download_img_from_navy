@@ -1,13 +1,14 @@
 var isAutoRun = false;
+
+var totalRequest = [];
+var index = 0;
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     //console.log(request);
     if (request == false) {
         sendResponse(isAutoRun);
     } else if (request === "stop" ){
+        console.log(totalRequest.toJSONString());
         isAutoRun = false;
-    } else {
-
-        isAutoRun = true;
         xmlhttp = new XMLHttpRequest()
 
         xmlhttp.open("POST", "http://127.0.0.1:8081/", false)
@@ -19,24 +20,16 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
                 }
             }
         }
-        xmlhttp.send(request)
+        xmlhttp.send(totalRequest.toJSONString());
+        totalRequest = [];
+        index = 0;
+    } else {
+
+        isAutoRun = true;
+        totalRequest[index] = request;
+        index += 1;
     }
     sendResponse(0);
-/*
-    for (i=0; i<request.length; i++) {
-        console.log(request[i])
-        xmlhttp.open("POST", "http://127.0.0.1:8081/", false)
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState==4) {
-                if (xmlhttp.status==200) {
-                    console.log("http://127.0.0.1:8081/ return " 
-                        + xmlhttp.responseText)
-                }
-            }
-        }
-        xmlhttp.send(request[i])
-    }
-    */
 });
 chrome.browserAction.onClicked.addListener(function(tab) {
     console.log('Tuering ' + tab.url + ' red!');
