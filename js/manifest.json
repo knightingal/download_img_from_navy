@@ -15,7 +15,8 @@
     "content_scripts": [
         {
             "matches":["http://www.1000rt.com/*"],
-            "js":["json.js", "content_script.js"]
+            "js":["json.js", "content_script.js"],
+            "run_at":"document_end"
         }
     ],
     "manifest_version": 2,
