@@ -48,22 +48,25 @@ class MyThread(Thread):
 
 def download_img(img_url, web_age_url, title_str):
     print "downloading " + img_url
-    request = urllib2.Request(img_url)
-    request.add_header("Referer", web_age_url)
-    request.add_header("User-Agent",
-                               "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 "
-                               "(KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31")
-    request.add_header("Connection", "keep-alive")
-    request.add_header("Accept", "*/*")
-    request.add_header("Accept-Encoding", "gzip,deflate,sdch")
-    request.add_header("Accept-Language", "zh-CN,zh;q=0.8")
-    request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-    picfd = urllib2.urlopen(request)
-    picstring = picfd.read()
-    picfd.close()
-    picfd = open(rootDirString + title_str + '/' + img_url.split('/')[-1], 'wb')
-    picfd.write(picstring)
-    picfd.close()
+    try:
+        request = urllib2.Request(img_url)
+        request.add_header("Referer", web_age_url)
+        request.add_header("User-Agent",
+                                   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 "
+                                   "(KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31")
+        request.add_header("Connection", "keep-alive")
+        request.add_header("Accept", "*/*")
+        request.add_header("Accept-Encoding", "gzip,deflate,sdch")
+        request.add_header("Accept-Language", "zh-CN,zh;q=0.8")
+        request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
+        picfd = urllib2.urlopen(request)
+        picstring = picfd.read()
+        picfd.close()
+        picfd = open(rootDirString + title_str + '/' + img_url.split('/')[-1], 'wb')
+        picfd.write(picstring)
+        picfd.close()
+    except Exception, e:
+        print e
     print img_url + " download succ"
 
 serveraddr = ('', 8081)
