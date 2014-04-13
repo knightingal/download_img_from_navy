@@ -21,6 +21,7 @@ class RequestHandler(CGIHTTPRequestHandler):
         print content
         jsonObjTotal = json.loads(content)
         print jsonObjTotal
+        thread_list = []
         for jsonObjStr in jsonObjTotal:
             jsonObj = json.loads(jsonObjStr)
             title = jsonObj["title"]
@@ -30,11 +31,21 @@ class RequestHandler(CGIHTTPRequestHandler):
             except OSError:
                 print rootDirString + jsonObj["title"] + "exists"
             for url in jsonObj["list"]:
-                #download_img(url, jsonObj["href"], jsonObj["title"])
                 thread = MyThread(url, jsonObj["href"], jsonObj["title"])
-                thread.start()
-            #print "download succ"
+                #thread.start()
+                thread_list.append(thread)
+
+        for thread_item in thread_list:
+            thread_item.start()
+
         self.wfile.write("ok")
+
+        for thread_item in thread_list:
+            thread_item.join()
+        print "all task succ"
+        for thread_item in thread_list:
+            if thread_item.is_succ == False:
+                print "%s is not succ" % thread_item.img_url
 
 class MyThread(Thread):
     def __init__(self, img_url, web_age_url, title_str):
@@ -42,32 +53,42 @@ class MyThread(Thread):
         self.img_url = img_url
         self.web_age_url = web_age_url
         self.title_str = title_str
+        self.is_succ = False
 
     def run(self):
         download_img(self.img_url, self.web_age_url, self.title_str)
+        self.is_succ = True
 
 def download_img(img_url, web_age_url, title_str):
-    print "downloading " + img_url
-    try:
-        request = urllib2.Request(img_url)
-        request.add_header("Referer", web_age_url)
-        request.add_header("User-Agent",
-                                   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 "
-                                   "(KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31")
-        request.add_header("Connection", "keep-alive")
-        request.add_header("Accept", "*/*")
-        request.add_header("Accept-Encoding", "gzip,deflate,sdch")
-        request.add_header("Accept-Language", "zh-CN,zh;q=0.8")
-        request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
-        picfd = urllib2.urlopen(request)
-        picstring = picfd.read()
-        picfd.close()
-        picfd = open(rootDirString + title_str + '/' + img_url.split('/')[-1], 'wb')
-        picfd.write(picstring)
-        picfd.close()
-    except Exception, e:
-        print e
-    print img_url + " download succ"
+    while True:
+        print "downloading %s" % img_url
+        try:
+            request = urllib2.Request(img_url)
+            request.add_header("Referer", web_age_url)
+            request.add_header("User-Agent",
+                                       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.31 "
+                                       "(KHTML, like Gecko) Chrome/26.0.1410.63 Safari/537.31")
+            request.add_header("Connection", "keep-alive")
+            request.add_header("Accept", "*/*")
+            request.add_header("Accept-Encoding", "gzip,deflate,sdch")
+            request.add_header("Accept-Language", "zh-CN,zh;q=0.8")
+            request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
+            picfd = urllib2.urlopen(request)
+            picstring = picfd.read()
+            picfd.close()
+            picfd = open(rootDirString + title_str + '/' + img_url.split('/')[-1], 'wb')
+            picfd.write(picstring)
+            picfd.close()
+        except Exception, e:
+            print e
+        if os.path.exists(rootDirString + title_str + '/' + img_url.split('/')[-1]):
+            print "%s download succ" % img_url
+            break
+        else:
+            print "%s download erro, try again" % img_url
+
+
+
 
 serveraddr = ('', 8081)
 sevr = HTTPServer(serveraddr, RequestHandler)
