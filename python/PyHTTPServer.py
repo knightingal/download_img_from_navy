@@ -6,6 +6,7 @@ import json
 import urllib2
 import os
 from threading import Thread
+import Queue
 
 rootDirString = '/home/knightingal/Downloads/.mix/1000/'
 
@@ -56,8 +57,10 @@ class MyThread(Thread):
         self.is_succ = False
 
     def run(self):
+        que.get()
         download_img(self.img_url, self.web_age_url, self.title_str)
         self.is_succ = True
+        que.put(1)
 
 def download_img(img_url, web_age_url, title_str):
     while True:
@@ -88,6 +91,9 @@ def download_img(img_url, web_age_url, title_str):
             print "%s download erro, try again" % img_url
 
 
+que = Queue.Queue()
+for i in range(5):
+    que.put(1)
 
 
 serveraddr = ('', 8081)
