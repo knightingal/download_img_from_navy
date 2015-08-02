@@ -4,6 +4,7 @@ var totalRequest = [];
 var index = 0;
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
+    
     if (request == false) {
         sendResponse(isAutoRun);
     } else if (request === "stop" ){
@@ -24,10 +25,20 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         totalRequest = [];
         index = 0;
     } else {
-
-        isAutoRun = true;
-        totalRequest[index] = request;
-        index += 1;
+        
+        // isAutoRun = true;
+        // totalRequest[index] = request;
+        // index += 1;
+        var xmlhttp = new XMLHttpRequest()
+        xmlhttp.open("GET", "http://127.0.0.1:8000/local1000/urls1000?request="+request, false)
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4) {
+                if (xmlhttp.status==200) {
+                    console.log("http://127.0.0.1:8000/ return " + xmlhttp.responseText);
+                }
+            }
+        }
+        xmlhttp.send();
         sendResponse(0);
     }
     
