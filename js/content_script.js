@@ -11,15 +11,7 @@ function doTask() {
     chrome.extension.sendMessage(
         pageInfo.toJSONString(), 
         function(response) {
-            if (next_title.localeCompare(titleShort) == 0) {
-                window.location.href = next_a;
-            }
-            else {
-                chrome.extension.sendMessage("stop",
-                    function(response) {
-                    }
-                );
-            }
+            chrome.extension.sendMessage("stop", function(response) {});
         }
     );
         
