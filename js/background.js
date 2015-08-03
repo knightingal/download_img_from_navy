@@ -30,7 +30,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         // totalRequest[index] = request;
         // index += 1;
         var xmlhttp = new XMLHttpRequest()
-        xmlhttp.open("GET", "http://127.0.0.1:8000/local1000/urls1000?request="+request, false)
+        xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", false)
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4) {
                 if (xmlhttp.status==200) {
@@ -38,7 +38,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
                 }
             }
         }
-        xmlhttp.send();
+        xmlhttp.send(request);
         sendResponse(0);
     }
     
