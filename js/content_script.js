@@ -1,20 +1,12 @@
-//document.body.style.backgroundColor="green"; 
-//document.getElementById("lst-ib").value="test";
 function doTask() {
-//console.log(x[2])
-    
-
     Task.init();
     var pageInfo = Task.getPageInfo();
-    
-
     chrome.extension.sendMessage(
         pageInfo.toJSONString(), 
         function(response) {
             chrome.extension.sendMessage("stop", function(response) {});
         }
     );
-        
 }
 
 var Task = {
@@ -34,15 +26,12 @@ var Task = {
                 new String(this.fontElementArray[this.fontElementArray.length - 13].innerHTML)
         );
     },
-
     "getNextUrl": function() {
         return this.fontElementArray[this.fontElementArray.length - 13].parentNode.href;
     },
-
     "getTitleShort": function(titleString) {
         return new String(titleString.slice(0, -4));
     },
-
     "getPageInfo": function() {
         var imgSrcArray = [];
         var pageInfoObj = {};
@@ -53,11 +42,9 @@ var Task = {
         pageInfoObj.title = this.getCurrentTitle();
         return pageInfoObj;
     },
-
     "isLastPage": function() {
         return this.getNextTitle().localeCompare(this.getCurrentTitle());
     },
-
     "doTask": function() {
         var getInfo = this.getPageInfo();
         console.log(getInfo);
@@ -71,13 +58,23 @@ var Task = {
     }
 }
 
+console.log("enter content_script.js");
+function checkIsAutoRun(autoRunCallback) {
+    chrome.extension.sendMessage(false, function(response) {
+        var isAutoRun = response;
+        if (isAutoRun === true) {
+            autoRunCallback();
+        }
+    });
+}
 
-console.log("enter sendMessage");
-chrome.extension.sendMessage(false, function(response) {
-    if (response == true) {
-        doTask();
-    }
-});
+checkIsAutoRun(doTask);
+
+// chrome.extension.sendMessage(false, function(response) {
+//     if (response == true) {
+//         doTask();
+//     }
+// });
 
 function getTitleShort(titleString) {
     return new String(titleString.slice(0, -4));

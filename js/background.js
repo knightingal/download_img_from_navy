@@ -33,9 +33,9 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", false)
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4) {
-                if (xmlhttp.status==200) {
-                    console.log("http://127.0.0.1:8000/ return " + xmlhttp.responseText);
-                }
+                
+                console.log("http://127.0.0.1:8000/ return " + xmlhttp.responseText);
+                
             }
         }
         xmlhttp.send(request);
