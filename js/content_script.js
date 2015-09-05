@@ -4,7 +4,12 @@ function doTask() {
     chrome.extension.sendMessage(
         pageInfo.toJSONString(), 
         function(response) {
-            chrome.extension.sendMessage("stop", function(response) {});
+            if (Task.isLastPage()) {
+                window.location.href = Task.getNextUrl();
+            } else {
+                chrome.extension.sendMessage("stop", function(response) {});
+            }
+            
         }
     );
 }
@@ -14,6 +19,7 @@ var Task = {
     "pElementArray": [],
     "init": function() {
         this.fontElementArray = document.getElementsByTagName("font");
+        console.log(this.fontElementArray);
         this.pElementArray = document.getElementsByTagName("p");
     },
     "getCurrentTitle": function() {
@@ -23,11 +29,12 @@ var Task = {
     },
     "getNextTitle": function() {
         return this.getTitleShort(
-                new String(this.fontElementArray[this.fontElementArray.length - 13].innerHTML)
+                new String(this.fontElementArray[this.fontElementArray.length - 16].innerHTML)
         );
     },
     "getNextUrl": function() {
-        return this.fontElementArray[this.fontElementArray.length - 13].parentNode.href;
+        var nextUrl = this.fontElementArray[this.fontElementArray.length - 16].parentNode.href;
+        return nextUrl;
     },
     "getTitleShort": function(titleString) {
         return new String(titleString.slice(0, -4));
@@ -43,24 +50,27 @@ var Task = {
         return pageInfoObj;
     },
     "isLastPage": function() {
-        return this.getNextTitle().localeCompare(this.getCurrentTitle());
-    },
-    "doTask": function() {
-        var getInfo = this.getPageInfo();
-        console.log(getInfo);
-        self.port.emit("sendPageInfo", getInfo);
-        if (this.isLastPage() == 0) {
-            self.port.emit("goToNextPage", this.getNextUrl());
-        }
-        else {
-            self.port.emit("stopAndSendPageInfosToServer");
-        }
+        var nextTitle = this.getNextTitle();
+        var currentTitle = this.getCurrentTitle();
+        return nextTitle.localeCompare(currentTitle) == 0;
     }
+    // ,
+    // "doTask": function() {
+    //     var getInfo = this.getPageInfo();
+    //     console.log(getInfo);
+    //     self.port.emit("sendPageInfo", getInfo);
+    //     if (this.isLastPage() == 0) {
+    //         self.port.emit("goToNextPage", this.getNextUrl());
+    //     }
+    //     else {
+    //         self.port.emit("stopAndSendPageInfosToServer");
+    //     }
+    // }
 }
 
 console.log("enter content_script.js");
 function checkIsAutoRun(autoRunCallback) {
-    chrome.extension.sendMessage(false, function(response) {
+    chrome.extension.sendMessage("checkIsAutoRun", function(response) {
         var isAutoRun = response;
         if (isAutoRun === true) {
             autoRunCallback();
@@ -69,12 +79,6 @@ function checkIsAutoRun(autoRunCallback) {
 }
 
 checkIsAutoRun(doTask);
-
-// chrome.extension.sendMessage(false, function(response) {
-//     if (response == true) {
-//         doTask();
-//     }
-// });
 
 function getTitleShort(titleString) {
     return new String(titleString.slice(0, -4));
