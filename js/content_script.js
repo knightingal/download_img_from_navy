@@ -1,26 +1,32 @@
 function doTask() {
     Task.init();
-    var pageInfo = Task.getPageInfo();
-    chrome.extension.sendMessage(
-        pageInfo.toJSONString(), 
-        function(response) {
-            if (Task.isLastPage()) {
-                window.location.href = Task.getNextUrl();
-            } else {
-                chrome.extension.sendMessage("stop", function(response) {});
-            }
+    // var pageInfo = Task.getPageInfo();
+    // chrome.extension.sendMessage(
+    //     pageInfo.toJSONString(), 
+    //     function(response) {
+    //         if (Task.isLastPage()) {
+    //             window.location.href = Task.getNextUrl();
+    //         } else {
+    //             chrome.extension.sendMessage("stop", function(response) {});
+    //         }
             
-        }
-    );
+    //     }
+    // );
 }
 
 var Task = {
-    "fontElementArray": [],
+    "trElementArray": [],
     "pElementArray": [],
     "init": function() {
-        this.fontElementArray = document.getElementsByTagName("font");
-        console.log(this.fontElementArray);
-        this.pElementArray = document.getElementsByTagName("p");
+        this.trElementArray = document.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+        console.log(trElementArray);
+        for (i = 0; i < this.trElementArray.length; i++) {
+            var tds = this.trElementArray[i].getElementsByTagName("td");
+            if (tds.length >= 4) {
+                console.log(tds[0].childNodes[0].href + " " + i);
+            }
+        }
+        // this.pElementArray = document.getElementsByTagName("p");
     },
     "getCurrentTitle": function() {
         return this.getTitleShort(
