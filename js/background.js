@@ -9,11 +9,13 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         isAutoRun = false;
         xmlhttp = new XMLHttpRequest()
         console.log(totalRequest);
-        xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", false)
+        xmlhttp.open("POST", "http://127.0.0.1:8000/local1000/urls1000/", true)
+        //xmlhttp.open("POST", "http://127.0.0.1:8081/startDownload/", true)
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState==4) {
                 if (xmlhttp.status==200) {
-                    console.log("http://127.0.0.1:8000/local1000/urls1000/ return " 
+                    console.log("http://127.0.0.1:8081/startDownload/ return " 
                         + xmlhttp.responseText)
                 }
             }
