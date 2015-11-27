@@ -1,31 +1,37 @@
 function doTask() {
     Task.init();
-    // var pageInfo = Task.getPageInfo();
-    // chrome.extension.sendMessage(
-    //     pageInfo.toJSONString(), 
-    //     function(response) {
-    //         if (Task.isLastPage()) {
-    //             window.location.href = Task.getNextUrl();
-    //         } else {
-    //             chrome.extension.sendMessage("stop", function(response) {});
-    //         }
+    var pageInfo = Task.getPageInfo();
+    chrome.extension.sendMessage(
+        pageInfo.toJSONString(), 
+        function(response) {
+            if (Task.isLastPage()) {
+                window.location.href = Task.getNextUrl();
+            } else {
+                chrome.extension.sendMessage("stop", function(response) {});
+            }
             
-    //     }
-    // );
+        }
+    );
 }
 
 var Task = {
     "trElementArray": [],
     "pElementArray": [],
+    "pageInfoObj": {},
+    "imgArray": [],
     "init": function() {
         this.trElementArray = document.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
         console.log(trElementArray);
-        for (i = 0; i < this.trElementArray.length; i++) {
+        for (var i = 0; i < this.trElementArray.length; i++) {
             var tds = this.trElementArray[i].getElementsByTagName("td");
             if (tds.length >= 4) {
                 console.log(tds[0].childNodes[0].href + " " + i);
+                console.log(tds[2].innerHTML + " " + i);
+                console.log(tds[3].innerHTML + " " + i);
+                this.imgArray.push({"imrSrc": tds[0].childNodes[0].href, "description": tds[2].innerHTML, "copyright": tds[3].innerHTML})
             }
         }
+        this.pageInfoObj.imgArray = this.imgArray;
         // this.pElementArray = document.getElementsByTagName("p");
     },
     "getCurrentTitle": function() {
