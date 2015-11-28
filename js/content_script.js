@@ -4,11 +4,11 @@ function doTask() {
     chrome.extension.sendMessage(
         pageInfo.toJSONString(), 
         function(response) {
-            if (Task.isLastPage()) {
-                window.location.href = Task.getNextUrl();
-            } else {
-                chrome.extension.sendMessage("stop", function(response) {});
-            }
+            // if (Task.isLastPage()) {
+            //     window.location.href = Task.getNextUrl();
+            // } else {
+            //     chrome.extension.sendMessage("stop", function(response) {});
+            // }
             
         }
     );
@@ -21,17 +21,23 @@ var Task = {
     "imgArray": [],
     "init": function() {
         this.trElementArray = document.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-        console.log(trElementArray);
+        console.log(this.trElementArray);
         for (var i = 0; i < this.trElementArray.length; i++) {
             var tds = this.trElementArray[i].getElementsByTagName("td");
             if (tds.length >= 4) {
                 console.log(tds[0].childNodes[0].href + " " + i);
                 console.log(tds[2].innerHTML + " " + i);
                 console.log(tds[3].innerHTML + " " + i);
-                this.imgArray.push({"imrSrc": tds[0].childNodes[0].href, "description": tds[2].innerHTML, "copyright": tds[3].innerHTML})
+                this.imgArray.push({
+                    "imrSrc": tds[0].childNodes[0].href, 
+                    "description": tds[2].innerHTML, 
+                    "copyright": tds[3].innerHTML})
             }
         }
         this.pageInfoObj.imgArray = this.imgArray;
+        var h1 = document.getElementsByTagName("h1")[1];
+        var title = h1.childNodes[0].childNodes[1].innerText
+        this.pageInfoObj.title = title;
         // this.pElementArray = document.getElementsByTagName("p");
     },
     "getCurrentTitle": function() {
@@ -52,14 +58,14 @@ var Task = {
         return new String(titleString.slice(0, -4));
     },
     "getPageInfo": function() {
-        var imgSrcArray = [];
-        var pageInfoObj = {};
-        for (var i = 2; i < this.pElementArray.length; i++) {
-            imgSrcArray[i-2] = this.pElementArray[i].firstChild.src;
-        }
-        pageInfoObj.imgSrcArray = imgSrcArray;
-        pageInfoObj.title = this.getCurrentTitle();
-        return pageInfoObj;
+        // var imgSrcArray = [];
+        // var pageInfoObj = {};
+        // for (var i = 2; i < this.pElementArray.length; i++) {
+        //     imgSrcArray[i-2] = this.pElementArray[i].firstChild.src;
+        // }
+        // pageInfoObj.imgSrcArray = imgSrcArray;
+        // pageInfoObj.title = this.getCurrentTitle();
+        return this.pageInfoObj;
     },
     "isLastPage": function() {
         var nextTitle = this.getNextTitle();
