@@ -4,6 +4,7 @@ function doTask() {
     chrome.extension.sendMessage(
         pageInfo.toJSONString(), 
         function(response) {
+            this.imgArrya = [];
             // if (Task.isLastPage()) {
             //     window.location.href = Task.getNextUrl();
             // } else {
