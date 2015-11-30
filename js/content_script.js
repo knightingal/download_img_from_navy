@@ -23,22 +23,30 @@ var Task = {
     "init": function() {
         this.trElementArray = document.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
         console.log(this.trElementArray);
+        var j = 0;
+        var notUseArray = [];
         for (var i = 0; i < this.trElementArray.length; i++) {
+           
             var tds = this.trElementArray[i].getElementsByTagName("td");
             if (tds.length >= 4) {
-                console.log(tds[0].childNodes[0].href + " " + i);
-                console.log(tds[2].innerHTML + " " + i);
-                console.log(tds[3].innerHTML + " " + i);
+                console.log(tds[0].childNodes[0].href + " " + j);
+                console.log(tds[2].innerHTML + " " + j);
+                console.log(tds[3].innerHTML + " " + j);
                 this.imgArray.push({
                     "imrSrc": tds[0].childNodes[0].href, 
                     "description": tds[2].innerHTML, 
                     "copyright": tds[3].innerHTML})
+                j++;
+            } else {
+                notUseArray.push(this.trElementArray[i]);
             }
+            
         }
         this.pageInfoObj.imgArray = this.imgArray;
         var h1 = document.getElementsByTagName("h1")[1];
         var title = h1.childNodes[0].childNodes[1].innerText
         this.pageInfoObj.title = title;
+        console.log(notUseArray);
         // this.pElementArray = document.getElementsByTagName("p");
     },
     "getCurrentTitle": function() {
